@@ -2,13 +2,13 @@
 require "logstash/codecs/base"
 require "logstash/util/charset"
 
-# Line-oriented text data.
+# Line-oriented text data that is null separated.
 #
 # Decoding behavior: Only whole line events will be emitted.
 #
 # Encoding behavior: Each event will be emitted with a trailing newline.
-class LogStash::Codecs::Line < LogStash::Codecs::Base
-  config_name "line"
+class LogStash::Codecs::LineNull < LogStash::Codecs::Base
+  config_name "linenull"
 
   # Set the desired text format for encoding.
   config :format, :validate => :string
@@ -23,7 +23,7 @@ class LogStash::Codecs::Line < LogStash::Codecs::Base
   config :charset, :validate => ::Encoding.name_list, :default => "UTF-8"
 
   # Change the delimiter that separates lines
-  config :delimiter, :validate => :string, :default => "\n"
+  config :delimiter, :validate => :string, :default => "\000"
 
   public
   def register

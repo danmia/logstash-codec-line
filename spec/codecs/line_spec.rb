@@ -1,12 +1,12 @@
 # encoding: utf-8
 
 require "logstash/devutils/rspec/spec_helper"
-require "logstash/codecs/line"
+require "logstash/codecs/linenull"
 require "logstash/event"
 
-describe LogStash::Codecs::Line do
+describe LogStash::Codecs::LineNull do
   subject do
-    next LogStash::Codecs::Line.new
+    next LogStash::Codecs::LineNull.new
   end
 
   context "#encode" do
@@ -15,7 +15,7 @@ describe LogStash::Codecs::Line do
     it "should return a default date formatted line" do
       expect(subject).to receive(:on_event).once.and_call_original
       subject.on_event do |e, d|
-        insist {d} == event.to_s + "\n"
+        insist {d} == event.to_s + "\000"
       end
       subject.encode(event)
     end
@@ -25,14 +25,14 @@ describe LogStash::Codecs::Line do
       subject.format = format
       expect(subject).to receive(:on_event).once.and_call_original
       subject.on_event do |e, d|
-        insist {d} == event.sprintf(format) + "\n"
+        insist {d} == event.sprintf(format) + "\000"
       end
       subject.encode(event)
     end
 
     context "when using custom :delimiter" do
       subject do
-        next LogStash::Codecs::Line.new("delimiter" => "|")
+        next LogStash::Codecs::LineNull.new("delimiter" => "|")
       end
 
       it "should append the delimiter to the line" do
@@ -48,7 +48,7 @@ describe LogStash::Codecs::Line do
   context "#decode" do
     it "should return an event from an ascii string" do
       decoded = false
-      subject.decode("hello world\n") do |e|
+      subject.decode("hello world\000") do |e|
         decoded = true
         insist { e.is_a?(LogStash::Event) }
         insist { e.get("message") } == "hello world"
@@ -57,7 +57,7 @@ describe LogStash::Codecs::Line do
     end
 
     it "should return an event from a valid utf-8 string" do
-      subject.decode("München\n") do |e|
+      subject.decode("München\000") do |e|
         insist { e.is_a?(LogStash::Event) }
         insist { e.get("message") } == "München"
       end
@@ -68,8 +68,8 @@ describe LogStash::Codecs::Line do
         next LogStash::Codecs::Line.new("delimiter" => "|")
       end
 
-      it "should not break lines by '\n'" do
-        line = "line1\nline2\nline3\n"
+      it "should not break lines by '\000'" do
+        line = "line1\000line2\000line3\000"
         result = []
         subject.decode(line) { |e| result << e }
         subject.flush { |e| result << e }

@@ -1,4 +1,4 @@
-:plugin: line
+:plugin: linenull
 :type: codec
 
 ///////////////////////////////////////////
@@ -14,20 +14,20 @@ END - GENERATED VARIABLES, DO NOT EDIT!
 
 [id="plugins-{type}s-{plugin}"]
 
-=== Line codec plugin
+=== LineNull codec plugin
 
 include::{include_path}/plugin_header.asciidoc[]
 
 ==== Description
 
-Line-oriented text data.
+Line-oriented text data that is null terminated.
 
 Decoding behavior: Only whole line events will be emitted.
 
-Encoding behavior: Each event will be emitted with a trailing newline.
+Encoding behavior: Each event will be emitted with a trailing null.
 
 [id="plugins-{type}s-{plugin}-options"]
-==== Line Codec Configuration Options
+==== LineNull Codec Configuration Options
 
 [cols="<,<,<",options="header",]
 |=======================================================================
@@ -57,7 +57,7 @@ This only affects "plain" format logs since json is `UTF-8` already.
 ===== `delimiter` 
 
   * Value type is <<string,string>>
-  * Default value is `"\n"`
+  * Default value is `"\000"`
 
 Change the delimiter that separates lines
 
