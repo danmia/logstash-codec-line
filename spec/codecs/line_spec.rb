@@ -65,7 +65,7 @@ describe LogStash::Codecs::LineNull do
 
     context "when using custom :delimiter" do
       subject do
-        next LogStash::Codecs::Line.new("delimiter" => "|")
+        next LogStash::Codecs::LineNull.new("delimiter" => "|")
       end
 
       it "should not break lines by '\000'" do
